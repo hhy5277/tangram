@@ -115,12 +115,6 @@ Object.assign(TextStyle, {
     },
 
     // Override
-    startData (tile) {
-        this.queues[tile.key] = [];
-        return Style.startData.call(this, tile);
-    },
-
-    // Override
     endData (tile) {
         let queue = this.queues[tile.key];
         delete this.queues[tile.key];
