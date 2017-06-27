@@ -69,6 +69,7 @@ Object.assign(Points, {
         this.shaders.uniforms = this.shaders.uniforms || {};
         this.shaders.uniforms.u_label_texture = Texture.default;
 
+        this.default_texture = this.texture;
         if (this.texture) {
             this.defines.TANGRAM_TEXTURE_POINT = true;
             this.shaders.uniforms.u_texture = this.texture;
@@ -130,6 +131,12 @@ Object.assign(Points, {
         if (!style.color && !this.texture) {
             return;
         }
+
+        // optional or default texture
+        // TODO: to make texture and point rendering compatible, should probably move current #defines for
+        // TANGRAM_TEXTURE_POINT and TANGRAM_SHADER_POINT into uniforms
+        style.texture = draw.texture;
+        this.texture = style.texture || this.default_texture;
 
         // optional sprite
         let sprite_info;
@@ -325,6 +332,13 @@ Object.assign(Points, {
                     point_objs.forEach(q => {
                         this.feature_style = q.style;
                         this.feature_style.label = q.label;
+
+                        if (q.style.texture) {
+                            let mesh_data = this.getTileMesh(tile, this.meshVariantTypeForDraw(q.style));
+                            mesh_data.uniforms = mesh_data.uniforms || {};
+                            mesh_data.uniforms.u_texture = mesh_data.uniforms.u_texture || q.style.texture;
+                        }
+
                         Style.addFeature.call(this, q.feature, q.draw, q.context);
                     });
                 }),
@@ -756,6 +770,14 @@ Object.assign(Points, {
 
     buildPolygons (points, style, vertex_data, context) {
         return this.build(style, vertex_data);
+    },
+
+    // Override
+    meshVariantTypeForDraw (draw) {
+        if (draw.texture) {
+            return draw.texture;
+        }
+        return this.default_mesh_variant;
     },
 
     makeMesh (vertex_data, vertex_elements, options = {}) {
