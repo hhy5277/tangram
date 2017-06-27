@@ -58,6 +58,12 @@ textures:
             bookstore: [0, 333, 32, 32]
             shield: [0, 1142, 32, 32]
             arrow: [1, 1175, 22, 22]
+    icons2:
+        url: images/pois.png
+        # filtering: nearest
+        sprites:
+            # define sprites: [x origin, y origin, width, height]
+            tree: [0, 629, 32, 32] # actually sunburst
 
 styles:
     buildings:
@@ -546,6 +552,7 @@ layers:
                     - { area: { min: 500px2 } }
             draw:
                 icons:
+                    texture: icons2
                     sprite: tree
                     priority: 2
                     size: 16px
